@@ -67,8 +67,10 @@ local function readGetResult(statusCode, body, action, errorCallback)
       body = string.gsub(body, "\r", "")
       body = string.gsub(body, "\n", "")
       result = sjson.decode(body)
+      if action then action(result) end
+   else
+      if errorCallback then errorCallback(statusCode) end
    end
-   if action then action(result) end
    running = false
    startNext()
 end
@@ -77,8 +79,10 @@ local function readPostResult(statusCode, body, action, errorCallback)
    print("reading post result")
    local result
    if isOkResult(statusCode) then
+      if action then action(result) end
+   else
+      if errorCallback then errorCallback(statusCode) end
    end
-   if action then action(result) end
    running = false
    startNext()
 end
@@ -193,17 +197,20 @@ Stop Rewind Record Online
 ]]
 function connect.PostKey(key, callback, errorCallback)
    local URL = "http://"..host.."/1/input/key";
-   postHTTP(URL,'{"key": "'..key..'"}', callback, errorCallback)
+   postHTTP(URL, '{"key": "'..key..'"}', callback, errorCallback)
 end
 	
 function connect.PowerOff(callback, errorCallback)
    PostKey("Standby", callback, errorCallback)
 end
 
-
+function connect.GetSystemInfo(key, callback, errorCallback)
+   local URL = "http://"..host.."/1/system";
+   getHTTP(URL, callback, errorCallback)
+end
 
 --[[
-	function GetDeviceName()
+	function ()
 		local URL = "http://"+host+"/1/system";
 		String response = getHTTP(URL);
 		try {

@@ -9,22 +9,22 @@ connect.PostKey('Digit3')
 connect.PostKey('Digit4')
 connect.PostKey('VolumeUp')
 connect.PostKey('VolumeDown')
-connect.GetCurrentVolume(function(v) print("callback") end)
-connect.GetCurrentSource(function(v) print("callback") end)
-connect.GetCurrentChannel(function(v) print("callback") end)
+connect.GetCurrentVolume(function(v) print("callback") end, function(err) print("error: ",err) end)
+connect.GetCurrentSource(function(v) print("callback") end, function(err) print("error: ",err) end)
+connect.GetCurrentChannel(function(v) print("callback") end, function(err) print("error: ",err) end)
 
 
-connect.GetSources(function(v) sources = v end)
+connect.GetSources(function(v) sources = v end, function(err) print("error: ",err) end)
 
-function SaveData(t)
+function SaveData()
    print("Volume: "..currentVolume)
    print("Source: "..sources[currentSourceId]["name"])
 end
 
 function UpdateValues(t)
    print("Updating")
-   connect.GetCurrentSource(function(v) currentSourceId = v["id"] end)
-   connect.GetCurrentVolume(function(v) currentVolume = v["current"] SaveData() t:start() end)
+   connect.GetCurrentSource(function(v) currentSourceId = v["id"] end, function(err) print("error: ",err) end)
+   connect.GetCurrentVolume(function(v) currentVolume = v["current"] SaveData() t:start() end, function(err) print("error: ",err) end)
 
 end
 
