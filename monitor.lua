@@ -2,6 +2,11 @@
 
 local connect = dofile("PhilipsConnect.lua")
 
+if not PhilipsStatus then
+   PhilipsStatus = {}
+end
+
+
 connect.GetCurrentVolume(function(v) print("callback") end)
 connect.PostKey('Digit1')
 connect.PostKey('Digit2')
@@ -13,26 +18,30 @@ connect.GetCurrentVolume(function(v) print("callback") end, function(err) print(
 connect.GetCurrentSource(function(v) print("callback") end, function(err) print("error: ",err) end)
 connect.GetCurrentChannel(function(v) print("callback") end, function(err) print("error: ",err) end)
 
-
-connect.GetSources(function(v) sources = v end, function(err) print("error: ",err) end)
+function LoadStatics()
+   if not PhilipsStatus.sources then
+      connect.GetSources(function(v) PhilipsStatus.sources = v end, function(err) print("error: ",err) end)
+   end
+end
 
 function SaveData()
-   print("Volume: "..currentVolume)
-   print("Source: "..sources[currentSourceId]["name"])
+   print("Volume: "..PhilipsStatus.currentVolume)
+   print("Source: "..PhilipsStatus.sources[PhilipsStatus.currentSourceId]["name"])
 end
 
 function UpdateValues(t)
    print("Updating")
-   connect.GetCurrentSource(function(v) currentSourceId = v["id"] end, function(err) print("error: ",err) end)
-   connect.GetCurrentVolume(function(v) currentVolume = v["current"] SaveData() t:start() end, function(err) print("error: ",err) end)
-
+   LoadStatics()
+   connect.GetCurrentSource(function(v) PhilipsStatus.currentSourceId = v["id"] end, function(err) print("error reading current source: ",err) end)
+   connect.GetCurrentVolume(function(v) PhilipsStatus.currentVolume = v["current"] SaveData() end, function(err) print("error reading volume: ",err) end)
+   connect.GetSystemInfo(function(v) PhilipsStatus.Status = "on" print("TV is ON") t:start() end,function(err)  PhilipsStatus.Status = "off" print("TV is OFF") t:start() end)
 end
 
 
 
-updateTimer = tmr.create()
-updateTimer:register(5000,tmr.ALARM_SEMI,UpdateValues)
-updateTimer:start()
+PhilipsStatus.updateTimer = tmr.create()
+PhilipsStatus.updateTimer:register(5000,tmr.ALARM_SEMI,UpdateValues)
+PhilipsStatus.updateTimer:start()
 
 
 sntp.sync(nil,
