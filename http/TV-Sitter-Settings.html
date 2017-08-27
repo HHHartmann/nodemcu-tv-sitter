@@ -1,0 +1,45 @@
+<html>
+<!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script-->
+<script src="angular.min.js"></script>
+<head></head>
+<body>
+
+<h1>TV Sitter: Settings</h1>
+<div ng-app="settings" ng-controller="settingsCtrl">
+<form  ng-submit="saveSettings(settings)">
+    check frequency in seconds: <input type="number" ng-model="settings.interval" min=1>
+	<br/>
+    <label>different source to switch to: 
+		<select ng-model="settings.selectedDifferentSource" ng-options="x for x in settings.sources">
+		</select>
+	</label>
+	<br/>
+	<button ng-click="save()">Save</button>
+	<input type="submit" value="submit">
+	<mark>{{settings}}</mark>
+</form>
+
+<script>
+var app = angular.module('settings', []);
+app.controller('settingsCtrl', function($scope, $http) {
+	$scope.saveSettings = function(settings){
+		$http.put("http://a.b/TV-Sitter-save.lua", {"key": "TV-Sitter-Settings.json", "value": settings });
+		alert("saved");
+	}
+    $http.get("TV-Sitter-Settings.json")
+    .then(function(response) {
+        //First function handles success
+		$scope.settings = response.data;
+    }, function(response) {
+        //Second function handles error
+		$scope.settings = {"interval": 333,
+							selectedDifferentSource : "HDMI 11",
+							sources : ['tv','HDMI 11']};
+        $scope.content = "Something went wrong";
+    });
+}); 
+</script> 
+</div>
+
+</body>
+</html>
