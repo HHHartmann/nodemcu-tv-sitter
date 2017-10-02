@@ -1,6 +1,6 @@
 <html>
-<!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script-->
-<script src="angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<!--script src="angular.min.js"></script-->
 <head></head>
 <body>
 
@@ -23,8 +23,7 @@
 var app = angular.module('settings', []);
 app.controller('settingsCtrl', function($scope, $http) {
 	$scope.saveSettings = function(settings){
-		$http.put("http://a.b/TV-Sitter-save.lua", {"key": "TV-Sitter-Settings.json", "value": settings });
-		alert("saved");
+		$http.put("TV-Sitter-save.lc", {"key": "TV-Sitter-Settings.json", "value": settings });
 	}
     $http.get("TV-Sitter-Settings.json")
     .then(function(response) {

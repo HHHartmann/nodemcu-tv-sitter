@@ -17,6 +17,7 @@
 </table>
 
 <button ng-click="add()">Add new Rule</button>
+<button ng-click="saveRules(rules)">Save Rule</button>
 
 <div id="overlay" ng-if="editing">
 	<h3>Edit Rule Nr.: {{editIndex + 1}}</h3>
@@ -73,12 +74,11 @@ app.controller('mainCtrl', function($scope, $http) {
 		return time.getHours() + ":" + time.getMinutes();
 	}
 
-	$scope.saveSettings = function(settings){
-		$http.put("http://a.b/TV-Sitter-save.lua", {"key": "TV-Sitter-Rules.json", "value": settings });
-		alert("saved");
+	$scope.saveRules = function(rules){
+		$http.put("TV-Sitter-save.lc", {"key": "TV-Sitter-Rules.json", "value": rules });
 	}
 	
-    $http.get("http://a.b/TV-Sitter-Rules.json")
+    $http.get("TV-Sitter-Rules.json")
     .then(function(response) {
         //First function handles success
 		$scope.rules = response.data;

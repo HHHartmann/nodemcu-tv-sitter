@@ -1,7 +1,7 @@
 {
-	"channelName": "ARD",
-	"channelId": "12:12",
-	"source": "none",
+	"channelName": "Das Erste HD",
+	"channelId": "4813",
+	"source": "TV",
 	"actions": {"to allowad"}
 	"groups": {"to allowad"}
 }
